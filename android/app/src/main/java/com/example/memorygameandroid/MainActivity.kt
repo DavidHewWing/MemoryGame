@@ -1,5 +1,6 @@
 package com.example.memorygameandroid
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -20,14 +21,17 @@ class MainActivity : AppCompatActivity() {
         val jsonArrayRequest = JsonObjectRequest(
             Request.Method.GET, url, null, Response.Listener { response ->
                 val productArray: JSONArray = response.getJSONArray("products")
+                val cardList = MutableList(0) {CardModel()}
                 for(i in 0 until productArray.length()){
                     val product: JSONObject = productArray.getJSONObject(i)
                     val title = product.getString("title")
-                    val id = product.getLong("id").toString()
+                    val id = product.getLong("id")
                     val imageUrl = product.getJSONArray("images").getJSONObject(0).getString("src")
-                    Log.d("Taggy", "Title: $title: Id: $id. Image: $imageUrl")
+                    cardList.add(CardModel(title, id, imageUrl))
                 }
-                Log.d("Taggy", productArray.length().toString())
+                val intent = Intent(this@MainActivity, PlayActivity::class.java)
+                intent.putParcelableArrayListExtra("cardList", ArrayList(cardList))
+                startActivity(intent)
             },
             Response.ErrorListener { error ->
                 Log.d("Taggy", "Error Occurred!")
