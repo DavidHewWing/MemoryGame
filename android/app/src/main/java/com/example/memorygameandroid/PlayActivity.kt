@@ -11,6 +11,5 @@ class PlayActivity : AppCompatActivity() {
         setContentView(R.layout.activity_play)
 
         val cardList = intent.getParcelableArrayListExtra<CardModel>("cardList")
-        Log.d("Poopy", cardList.toString())
     }
 }
