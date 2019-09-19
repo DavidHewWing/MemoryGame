@@ -2,6 +2,25 @@
 
 Thursday -> Finish the setup and layout.
 
+Good idea to have max card count at 40
+Here you are challenging yourself, it isn't a head-to-head matchup against another player
+
+
+## Challenge
+
+1. The user should have to find a minimum of 10 pairs to win. 
+2. Keep track of how many pairs the user has found. 
+3. When the user wins, display a message to let them know!
+4. Make sure it compiles successfully.
+
+Bonus:
+
+1. Make the game configurable to match 3 or 4 of the same products instead of 2.
+2. Make the grid size configurable. (The player needs to match more than 10 sets of the same product).
+3. Build a slick screen that keeps track of the user’s score.
+4. Make a button that shuffles the game.
+5. Feel free to make the app beautiful and add anything else you think would be cool!
+
 ## Third Party Dependencies
 
 ### Volley
