@@ -1,5 +1,6 @@
 # Memory Game
 
+Thursday -> Finish the setup and layout.
 
 ## Third Party Dependencies
 
