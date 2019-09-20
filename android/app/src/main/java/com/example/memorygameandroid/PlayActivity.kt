@@ -23,7 +23,7 @@ class PlayActivity : AppCompatActivity() {
         true
     }
 
-    private fun loadFragment(itemId: Int) {
+    public fun loadFragment(itemId: Int) {
         val tag = itemId.toString()
         var fragment = supportFragmentManager.findFragmentByTag(tag) ?: when (itemId) {
             R.id.setup_menu -> {

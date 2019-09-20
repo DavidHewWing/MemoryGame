@@ -46,10 +46,9 @@
             android:id="@+id/toggleGroup"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="80dp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginStart="32dp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/desc_header">
+            app:layout_constraintTop_toBottomOf="@+id/textView">
 
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/matching2"
@@ -73,6 +72,80 @@
                 android:text="4" />
 
         </com.google.android.material.button.MaterialButtonToggleGroup>
+
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="32dp"
+            android:textColor="#000000"
+            android:text="How many cards are in a match?"
+            app:layout_constraintBottom_toTopOf="@+id/toggleGroup"
+            app:layout_constraintStart_toStartOf="@+id/toggleGroup"
+            app:layout_constraintTop_toBottomOf="@+id/desc_header"
+            app:layout_constraintVertical_bias="0.885" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/textViewPairs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="36dp"
+            android:text="How many pairs do you need to win?"
+            android:textColor="#000000"
+            app:layout_constraintStart_toStartOf="@+id/toggleGroupPairs"
+            app:layout_constraintTop_toBottomOf="@+id/toggleGroup" />
+
+        <com.google.android.material.button.MaterialButtonToggleGroup
+            android:id="@+id/toggleGroupPairs"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textViewPairs">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pairs10"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="10" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pairs11"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="11" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pairs12"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="12" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pairs13"
+                style="?attr/materialButtonOutlinedStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="13" />
+
+        </com.google.android.material.button.MaterialButtonToggleGroup>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/play_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:text="Play game"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/toggleGroupPairs" />
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
