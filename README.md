@@ -1,6 +1,8 @@
 # Memory Game
 
-Thursday -> Finish the setup and layout.
+Set up the last row for the cards so they are not wonky size
+Add the click animation to zoom into your face
+Add playing after
 
 Good idea to have max card count at 40
 Here you are challenging yourself, it isn't a head-to-head matchup against another player
