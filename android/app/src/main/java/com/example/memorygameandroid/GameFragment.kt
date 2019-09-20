@@ -2,19 +2,19 @@ package com.example.memorygameandroid
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.drawable.GradientDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.*
-import android.widget.LinearLayout
+import android.widget.*
 import androidx.fragment.app.Fragment
-import android.widget.TableRow
-import android.widget.TextView
 import androidx.core.view.marginBottom
 import androidx.core.view.marginLeft
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.google.android.material.card.MaterialCardView
 import kotlinx.android.synthetic.main.fragment_game.*
 
 class GameFragment : Fragment() {
@@ -50,8 +50,15 @@ class GameFragment : Fragment() {
         )
     }
 
+    /**
+     * @params layoutheight - the height of the parent layout
+     * @params layoutwidth - the width of the parent layout
+     */
     private fun displayTable(layoutheight: Int, layoutwidth:Int) {
         var count = 0
+        val shape = GradientDrawable()
+        shape.cornerRadius = 8F
+        shape.setColor(Color.parseColor("#b9dab8"))
         (layout.parent as ViewManager).removeView(layout)
         val numRowsWithRemainder = if(remainders == 0) this.numRows else this.numRows + 1
         val displayMetrics = DisplayMetrics()
@@ -69,18 +76,22 @@ class GameFragment : Fragment() {
                 if (count == totalCells ) {
                     break
                 }
-                val tv = TextView(context)
-                tv.apply {
-                    gravity = Gravity.CENTER
+                val imageView = ImageView(context)
+                imageView.setImageDrawable(resources.getDrawable(R.drawable.shopify, context?.theme))
+                imageView.setPadding(40, 40,40,40)
+                val relativeLayout = RelativeLayout(context)
+                relativeLayout.apply {
                     layoutParams = TableRow.LayoutParams(width, height, 1.0F)
-                    text = "HAHA"
-                    setBackgroundColor((Color.parseColor("#000000")))
+                    background = shape
+                    elevation = 10F
+                    translationZ = 10F
                 }
-                (tv.layoutParams as LinearLayout.LayoutParams).setMargins(10,10, 10, 10)
-                row.addView(tv)
+                (relativeLayout.layoutParams as LinearLayout.LayoutParams).setMargins(10,10, 10, 10)
+                relativeLayout.addView(imageView)
+                row.addView(relativeLayout)
                 count++
             }
-            wordLayout?.addView(row)
+            cardLayout?.addView(row)
         }
     }
 

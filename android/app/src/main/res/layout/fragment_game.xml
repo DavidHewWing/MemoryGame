@@ -15,7 +15,7 @@
         android:orientation="horizontal">
 
         <TableLayout
-            android:id="@+id/wordLayout"
+            android:id="@+id/cardLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"></TableLayout>
     </LinearLayout>
