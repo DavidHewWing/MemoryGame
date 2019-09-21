@@ -8,11 +8,18 @@ import kotlinx.android.synthetic.main.activity_play.*
 
 class PlayActivity : AppCompatActivity() {
 
+    private lateinit var cardMap: HashMap<Long, CardModel>
+    private val gameFrag = GameFragment.newInstance()
+    private val setupFrag = SetUpFragment.newInstance()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_play)
 
-        val cardList = intent.getParcelableArrayListExtra<CardModel>("cardList")
+        cardMap = intent.getSerializableExtra("cardMap") as HashMap<Long, CardModel>
+        val bundle = Bundle()
+        bundle.putSerializable("cardMap", cardMap)
+        gameFrag.arguments = bundle
 
         bottom_navigation.setOnNavigationItemSelectedListener(onNavigationItemSelectedListener)
         loadFragment(bottom_navigation.selectedItemId)
@@ -23,14 +30,14 @@ class PlayActivity : AppCompatActivity() {
         true
     }
 
-    public fun loadFragment(itemId: Int) {
+    fun loadFragment(itemId: Int) {
         val tag = itemId.toString()
         var fragment = supportFragmentManager.findFragmentByTag(tag) ?: when (itemId) {
             R.id.setup_menu -> {
-                SetUpFragment.newInstance()
+                setupFrag
             }
             R.id.play_menu -> {
-                GameFragment.newInstance()
+                gameFrag
             }
             else -> {
                 null
