@@ -21,17 +21,16 @@ class MainActivity : AppCompatActivity() {
         val jsonArrayRequest = JsonObjectRequest(
             Request.Method.GET, url, null, Response.Listener { response ->
                 val productArray: JSONArray = response.getJSONArray("products")
-                val cardMap = HashMap<Long, CardModel>()
+                val cardList = MutableList(0) {CardModel()}
                 for(i in 0 until productArray.length()){
                     val product: JSONObject = productArray.getJSONObject(i)
                     val title = product.getString("title")
                     val id = product.getLong("id")
                     val imageUrl = product.getJSONArray("images").getJSONObject(0).getString("src")
-
-                    cardMap[id]= CardModel(title, id, imageUrl)
+                    cardList.add(CardModel(title, id, imageUrl))
                 }
                 val intent = Intent(this@MainActivity, PlayActivity::class.java)
-                intent.putExtra("cardMap", cardMap)
+                intent.putParcelableArrayListExtra("cardList", ArrayList(cardList))
                 startActivity(intent)
             },
             Response.ErrorListener { error ->

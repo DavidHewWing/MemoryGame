@@ -6,4 +6,8 @@
     <item android:id="@+id/play_menu"
         android:icon="@drawable/play_icon"
         android:title="Play Game" />
+    <item android:id="@+id/cards_menu"
+        android:icon="@drawable/card_icon"
+        android:title="Your Hand">
+    </item>
 </menu>
