@@ -7,7 +7,7 @@ class Communicator : ViewModel(){
 
     var message = MutableLiveData<Any>()
 
-    fun setMsgCommunicator(msg: HashMap<String, Int>){
+    fun setMsgCommunicator(msg: Any){
         message.value = msg
     }
 }

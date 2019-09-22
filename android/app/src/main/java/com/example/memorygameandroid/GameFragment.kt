@@ -22,6 +22,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_game.*
+import kotlin.reflect.typeOf
 
 class GameFragment : Fragment() {
 
@@ -33,6 +34,7 @@ class GameFragment : Fragment() {
     private val gameMap = HashMap<Int, CardModel>()
 
     private lateinit var cardList: ArrayList<CardModel>
+    private lateinit var handArray: ArrayList<CardModel>
 
     private var currentAnimator: Animator? = null
     private var shortAnimationDuration: Int = 0
@@ -54,14 +56,17 @@ class GameFragment : Fragment() {
 
         model.message.observe(this,
             Observer<Any> { o ->
-                val total = (o as HashMap<String, Int>)["pairCount"]?.times(o["winningCount"]!!)
-                if (total != null) {
-                    numRows = total / numColumns
-                    remainders = total - (numRows * numColumns)
-                    totalCells = total
-                    pairsCount = o["pairCount"]!!
-                    setUpCardInfo()
-                    setUpTable()
+                if (o is HashMap<*, *>) {
+                    val total = (o as HashMap<String, Int>)["pairCount"]?.times(o["winningCount"]!!)
+                    if (total != null) {
+                        numRows = total / numColumns
+                        remainders = total - (numRows * numColumns)
+                        totalCells = total
+                        pairsCount = o["pairCount"]!!
+                        handArray = ArrayList(pairsCount)
+                        setUpCardInfo()
+                        setUpTable()
+                    }
                 }
             }
         )
@@ -161,7 +166,22 @@ class GameFragment : Fragment() {
         val clickListener = View.OnClickListener {view ->
             val (title, id, imageUrl) = gameMap[index]!!
             Log.d("clicklistener", "You have touch card $title with id: $id at index $index with imageUrl $imageUrl")
-            zoomCard(relativeLayout, gameMap[index]!!)
+            var clickedSame = false
+            for(card in handArray) {
+                if(card.id == id ) {
+                    clickedSame = true
+                    Toast.makeText(context, "You cannot click the same card twice", Toast.LENGTH_LONG).show()
+                }
+            }
+            if(!clickedSame) {
+                zoomCard(relativeLayout, gameMap[index]!!)
+                handArray.add(gameMap[index]!!)
+                val model = ViewModelProviders.of(activity!!).get(Communicator::class.java)
+                model.setMsgCommunicator(handArray)
+                if(handArray.size == pairsCount) {
+                        // evaluate if they are the same or not
+                }
+            }
         }
         return clickListener
     }
