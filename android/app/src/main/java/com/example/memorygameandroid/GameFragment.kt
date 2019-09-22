@@ -127,6 +127,7 @@ class GameFragment : Fragment() {
         val cardsInGameIndexes = arrayListOf<Int>()
         val occurences = IntArray(cardsInGame.size) { i -> 0 }
         val exclude = arrayListOf<Int>()
+        var counter = 0
         for (i in 0 until amountOfPairs) {
             val randomCardIndex = (0 until cardList.size).random()
             cardsInGame[i] = cardList[randomCardIndex]
@@ -140,7 +141,9 @@ class GameFragment : Fragment() {
             if (occurences[randomIndex] == pairsCount) {
                 exclude.add(randomIndex)
             }
-            gameMap[i] = cardsInGame[randomIndex]!!
+            val (title, id, imageUrl, position) = cardsInGame[randomIndex]!!
+            gameMap[i] = CardModel(title, id, imageUrl, counter)
+            counter++
         }
     }
 
@@ -161,27 +164,49 @@ class GameFragment : Fragment() {
     }
 
 
+    private fun checkClickSameCard() {
+
+    }
+
+
+    private fun evaluateChoice(index:Int, relativeLayout: RelativeLayout) {
+        val (title, id, imageUrl) = gameMap[index]!!
+        var clickedSame = false
+        for(card in handArray) {
+            if(card.position == index) {
+                Toast.makeText(context, "You have clicked the same card!", Toast.LENGTH_LONG).show()
+                clickedSame = true
+                break
+            }
+        }
+
+        if(!clickedSame) {
+            zoomCard(relativeLayout, gameMap[index]!!)
+            handArray.add(gameMap[index]!!)
+            val model = ViewModelProviders.of(activity!!).get(Communicator::class.java)
+            var match = true
+            for(card in handArray) {
+                if(card.id != id) {
+                    match = false
+                    break
+                }
+            }
+            if(handArray.size == pairsCount) {
+                if(match) {
+                    Toast.makeText(context, "You have found a match", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Try again", Toast.LENGTH_SHORT).show()
+                }
+                handArray.clear()
+            }
+            model.setMsgCommunicator(handArray)
+        }
+    }
+
     // Sets up the clicklistener for the cards
     private fun setupClickListeners( index: Int, relativeLayout: RelativeLayout) : View.OnClickListener {
         val clickListener = View.OnClickListener {view ->
-            val (title, id, imageUrl) = gameMap[index]!!
-            Log.d("clicklistener", "You have touch card $title with id: $id at index $index with imageUrl $imageUrl")
-            var clickedSame = false
-            for(card in handArray) {
-                if(card.id == id ) {
-                    clickedSame = true
-                    Toast.makeText(context, "You cannot click the same card twice", Toast.LENGTH_LONG).show()
-                }
-            }
-            if(!clickedSame) {
-                zoomCard(relativeLayout, gameMap[index]!!)
-                handArray.add(gameMap[index]!!)
-                val model = ViewModelProviders.of(activity!!).get(Communicator::class.java)
-                model.setMsgCommunicator(handArray)
-                if(handArray.size == pairsCount) {
-                        // evaluate if they are the same or not
-                }
-            }
+            evaluateChoice(index, relativeLayout)
         }
         return clickListener
     }

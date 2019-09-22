@@ -35,6 +35,7 @@ class PlayActivity : AppCompatActivity() {
 
     private lateinit var dialog: MaterialDialog
     private lateinit var handList: ArrayList<CardModel>
+    private var pairsCount: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -58,7 +59,14 @@ class PlayActivity : AppCompatActivity() {
             Observer<Any> { o ->
                 if (o is ArrayList<*>) {
                     handList = o as ArrayList<CardModel>
-                    updateHand()
+                    if (pairsCount == handList.size || handList.size < 1) {
+                        resetHand()
+                    } else {
+                        updateHand()
+                    }
+                }
+                if(o is HashMap<*,*>) {
+                    pairsCount = o["pairCount"]!! as Int
                 }
             }
         )
@@ -66,13 +74,25 @@ class PlayActivity : AppCompatActivity() {
     }
 
     private fun updateHand() {
-        val view = dialog.getCustomView() as RelativeLayout
-        val card = view.getChildAt(updatedHandIndex) as MaterialCardView
-        val frameLayout = card.getChildAt(0) as FrameLayout
-        val constraintLayout = frameLayout.getChildAt(0) as ConstraintLayout
-        val iView = constraintLayout.getChildAt(0) as ImageView
-        Picasso.get().load(handList[updatedHandIndex].imageUrl).into(iView)
-        updatedHandIndex++
+            val view = dialog.getCustomView() as RelativeLayout
+            val card = view.getChildAt(updatedHandIndex) as MaterialCardView
+            val frameLayout = card.getChildAt(0) as FrameLayout
+            val constraintLayout = frameLayout.getChildAt(0) as ConstraintLayout
+            val iView = constraintLayout.getChildAt(0) as ImageView
+            Picasso.get().load(handList[updatedHandIndex].imageUrl).into(iView)
+            updatedHandIndex++
+    }
+
+    private fun resetHand() {
+        for(i in 0 until 4) {
+            val view = dialog.getCustomView() as RelativeLayout
+            val card = view.getChildAt(i) as MaterialCardView
+            val frameLayout = card.getChildAt(0) as FrameLayout
+            val constraintLayout = frameLayout.getChildAt(0) as ConstraintLayout
+            val iView = constraintLayout.getChildAt(0) as ImageView
+            iView.setImageDrawable(resources.getDrawable(R.drawable.shopify, theme))
+        }
+        updatedHandIndex = 0
     }
 
     private val onNavigationItemSelectedListener = BottomNavigationView.OnNavigationItemSelectedListener { item ->
