@@ -1,15 +1,26 @@
 package com.example.memorygameandroid
 
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.AnimatorSet
+import android.animation.ObjectAnimator
 import android.graphics.Color
+import android.graphics.Point
+import android.graphics.Rect
+import android.graphics.RectF
 import android.graphics.drawable.GradientDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.text.Layout
 import android.util.Log
 import android.view.*
+import android.view.animation.DecelerateInterpolator
 import android.widget.*
 import androidx.fragment.app.Fragment
 import androidx.core.view.marginBottom
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_game.*
 
 class GameFragment : Fragment() {
@@ -22,6 +33,9 @@ class GameFragment : Fragment() {
     private val gameMap = HashMap<Int, CardModel>()
 
     private lateinit var cardList: ArrayList<CardModel>
+
+    private var currentAnimator: Animator? = null
+    private var shortAnimationDuration: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -125,13 +139,130 @@ class GameFragment : Fragment() {
         }
     }
 
-    // Sets up the click variable for each card
-    private fun setupClickListeners( index: Int) : View.OnClickListener {
-        return View.OnClickListener {
-            val (title, id, imageUrl) = gameMap[index]!!
-            Log.d("clicklistener", "You have touch card $title with id: $id at index $index with imageUrl $imageUrl")
+    /**
+     * Toggles the clicking of the cards
+     * @param clickable - true if clickable, false otherwise
+     * @param alphaValue - the value on how opaque/transparent to make the container
+     */
+    private fun toggleCardClick(clickable: Boolean, alphaValue: Float) {
+        container.alpha = alphaValue
+        for(i in 0 until cardLayout.childCount) {
+            val interLayout = cardLayout.getChildAt(i) as TableRow
+            for(j in 0 until interLayout.childCount) {
+                val childLayout = interLayout.getChildAt(j)
+                childLayout.isClickable = clickable
+            }
         }
     }
+
+
+    // Sets up the clicklistener for the cards
+    private fun setupClickListeners( index: Int, relativeLayout: RelativeLayout) : View.OnClickListener {
+        val clickListener = View.OnClickListener {view ->
+            val (title, id, imageUrl) = gameMap[index]!!
+            Log.d("clicklistener", "You have touch card $title with id: $id at index $index with imageUrl $imageUrl")
+            zoomCard(relativeLayout, gameMap[index]!!)
+        }
+        return clickListener
+    }
+
+    private fun zoomCard(rLayout: RelativeLayout, cardModel: CardModel) {
+        shortAnimationDuration = 500
+        currentAnimator?.cancel()
+
+        val (title, id, imageUrl) = cardModel
+
+        cardIdTextView.text = id.toString()
+        cardTitleTextView.text = title.toString()
+        Picasso.get().load(imageUrl).into(cardImageView)
+
+        val startBoundsInt = Rect()
+        val finalBoundsInt = Rect()
+        val globalOffset = Point()
+        rLayout.getGlobalVisibleRect(startBoundsInt)
+        container.getGlobalVisibleRect(finalBoundsInt, globalOffset)
+        startBoundsInt.offset(globalOffset.x, globalOffset.y)
+        finalBoundsInt.offset(globalOffset.x + 120, globalOffset.y - 70)
+
+        val startBounds = RectF(startBoundsInt)
+        val finalBounds = RectF(finalBoundsInt)
+
+        val startScale: Float
+        if ((finalBounds.width() / finalBounds.height() > startBounds.width() / startBounds.height())) {
+            // Extend start bounds horizontally
+            startScale = startBounds.height() / finalBounds.height()
+            val startWidth: Float = startScale * finalBounds.width()
+            val deltaWidth: Float = (startWidth - startBounds.width()) / 2
+            startBounds.left -= deltaWidth.toInt()
+            startBounds.right += deltaWidth.toInt()
+        } else {
+            // Extend start bounds vertically
+            startScale = startBounds.width() / finalBounds.width()
+            val startHeight: Float = startScale * finalBounds.height()
+            val deltaHeight: Float = (startHeight - startBounds.height()) / 2f
+            startBounds.top -= deltaHeight.toInt()
+            startBounds.bottom += deltaHeight.toInt()
+        }
+
+        hiddenCard.visibility = View.VISIBLE
+        toggleCardClick(false, 0.4F)
+
+        currentAnimator = AnimatorSet().apply {
+            play(ObjectAnimator.ofFloat(
+                hiddenCard,
+                View.X,
+                startBounds.left,
+                finalBounds.left)
+            ).apply {
+                with(ObjectAnimator.ofFloat(hiddenCard, View.Y, startBounds.top, finalBounds.top))
+                with(ObjectAnimator.ofFloat(hiddenCard, View.SCALE_X, startScale, 1f))
+                with(ObjectAnimator.ofFloat(hiddenCard, View.SCALE_Y, startScale, 1f))
+            }
+            duration = shortAnimationDuration.toLong()
+            interpolator = DecelerateInterpolator()
+            addListener(object : AnimatorListenerAdapter() {
+
+                override fun onAnimationEnd(animation: Animator) {
+                    currentAnimator = null
+                }
+
+                override fun onAnimationCancel(animation: Animator) {
+                    currentAnimator = null
+                }
+            })
+            start()
+        }
+
+        Handler().postDelayed({
+            currentAnimator?.cancel()
+            currentAnimator = AnimatorSet().apply {
+                play(ObjectAnimator.ofFloat(hiddenCard, View.X, startBounds.left)).apply {
+                    with(ObjectAnimator.ofFloat(hiddenCard, View.Y, startBounds.top))
+                    with(ObjectAnimator.ofFloat(hiddenCard, View.SCALE_X, startScale))
+                    with(ObjectAnimator.ofFloat(hiddenCard, View.SCALE_Y, startScale))
+                }
+                duration = shortAnimationDuration.toLong()
+                interpolator = DecelerateInterpolator()
+                addListener(object : AnimatorListenerAdapter() {
+
+                    override fun onAnimationEnd(animation: Animator) {
+                        toggleCardClick(true, 1.0F)
+                        hiddenCard.visibility = View.GONE
+                        currentAnimator = null
+                    }
+
+                    override fun onAnimationCancel(animation: Animator) {
+                        toggleCardClick(true, 1.0F)
+                        hiddenCard.visibility = View.GONE
+                        currentAnimator = null
+                    }
+                })
+                start()
+            }
+        }, 1500)
+
+    }
+
 
     /**
      * @params layoutheight - the height of the parent layout
@@ -166,7 +297,7 @@ class GameFragment : Fragment() {
                 val relativeLayout =
                     if (totalCells - count <= remainders) createCardBack(shape, true, width, height)
                     else createCardBack(shape, false, width, height)
-                val listener = setupClickListeners(count)
+                val listener = setupClickListeners(count, relativeLayout)
                 // finally add all to screen
                 relativeLayout.addView(imageView)
                 relativeLayout.setOnClickListener(listener)
