@@ -1,7 +1,6 @@
 # Memory Game
 
-Add the click animation to zoom into your face and show data
-Add playing after
+Add playing the game so all the game functions
 
 Good idea to have max card count at 40
 Here you are challenging yourself, it isn't a head-to-head matchup against another player
