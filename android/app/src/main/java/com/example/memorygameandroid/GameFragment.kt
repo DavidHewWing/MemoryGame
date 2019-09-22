@@ -16,13 +16,19 @@ import android.util.Log
 import android.view.*
 import android.view.animation.DecelerateInterpolator
 import android.widget.*
+import androidx.core.view.get
 import androidx.fragment.app.Fragment
 import androidx.core.view.marginBottom
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_game.*
+import kotlin.math.floor
 import kotlin.reflect.typeOf
+import android.view.ViewManager
+import com.example.memorygameandroid.CardModel
+
+
 
 class GameFragment : Fragment() {
 
@@ -36,6 +42,7 @@ class GameFragment : Fragment() {
     private lateinit var cardList: ArrayList<CardModel>
     private lateinit var handArray: ArrayList<CardModel>
 
+    private var handIndexes = ArrayList<Int>()
     private var currentAnimator: Animator? = null
     private var shortAnimationDuration: Int = 0
 
@@ -164,11 +171,6 @@ class GameFragment : Fragment() {
     }
 
 
-    private fun checkClickSameCard() {
-
-    }
-
-
     private fun evaluateChoice(index:Int, relativeLayout: RelativeLayout) {
         val (title, id, imageUrl) = gameMap[index]!!
         var clickedSame = false
@@ -183,6 +185,7 @@ class GameFragment : Fragment() {
         if(!clickedSame) {
             zoomCard(relativeLayout, gameMap[index]!!)
             handArray.add(gameMap[index]!!)
+            handIndexes.add(index)
             val model = ViewModelProviders.of(activity!!).get(Communicator::class.java)
             var match = true
             for(card in handArray) {
@@ -194,12 +197,25 @@ class GameFragment : Fragment() {
             if(handArray.size == pairsCount) {
                 if(match) {
                     Toast.makeText(context, "You have found a match", Toast.LENGTH_SHORT).show()
+                    removeCards(index)
                 } else {
                     Toast.makeText(context, "Try again", Toast.LENGTH_SHORT).show()
                 }
                 handArray.clear()
+                handIndexes.clear()
             }
             model.setMsgCommunicator(handArray)
+        }
+    }
+
+    private fun removeCards(indexHi: Int) {
+        for(i in 0 until handArray.size) {
+            val index = handIndexes[i]
+            val tableRowPos = floor((index / numColumns).toDouble()).toInt()
+            val tableRow = cardLayout.getChildAt(tableRowPos) as TableRow
+            val rLayoutPos = index - tableRowPos * numColumns
+            val rLayout = tableRow.getChildAt(rLayoutPos) as RelativeLayout
+            tableRow.removeView(rLayout)
         }
     }
 
