@@ -2,7 +2,7 @@
 
 https://docs.google.com/document/d/1M2VsBSZr8696HU6mO3MWveSB7p3Do9lOkMrjT5nKiEg/edit
 
-### The feautre of my memory game!
+### The features of my memory game! :bowtie:
 
 1. You are can play a memory game
 2. Keep track of how many pairs the user has found. 
@@ -25,7 +25,7 @@ https://docs.google.com/document/d/1M2VsBSZr8696HU6mO3MWveSB7p3Do9lOkMrjT5nKiEg/
 | --- | --- | --- |
 |<img src="https://github.com/DavidHewWing/memory-game/blob/master/pics/set-up.png" width="200"> | <img src="https://github.com/DavidHewWing/memory-game/blob/master/pics/preview.gif" width="200"> | <img src="https://github.com/DavidHewWing/memory-game/blob/master/pics/hand.png" width="200"> |
 
-## How the game works
+## How the game works :books:
 
 1. You choose amount of cards you want to match on the screen and how many cards define a match
 2. You enter a game with all the cards on the screen
@@ -35,7 +35,7 @@ https://docs.google.com/document/d/1M2VsBSZr8696HU6mO3MWveSB7p3Do9lOkMrjT5nKiEg/
 6. If you get a match the cards are eliminated
 7. Continue until you have no more cards
 
-## Third Party Dependencies
+## Third Party Dependencies :wrench:
 
 ### Picasso
 Allows you to easily put images from URL into your imageviews
