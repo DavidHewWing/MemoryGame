@@ -26,6 +26,7 @@ import kotlinx.android.synthetic.main.fragment_game.*
 import kotlin.math.floor
 import kotlin.reflect.typeOf
 import android.view.ViewManager
+import com.afollestad.materialdialogs.MaterialDialog
 import com.example.memorygameandroid.CardModel
 
 
@@ -197,7 +198,7 @@ class GameFragment : Fragment() {
             if(handArray.size == pairsCount) {
                 if(match) {
                     Toast.makeText(context, "You have found a match", Toast.LENGTH_SHORT).show()
-                    removeCards(index)
+                    removeCards()
                 } else {
                     Toast.makeText(context, "Try again", Toast.LENGTH_SHORT).show()
                 }
@@ -208,14 +209,26 @@ class GameFragment : Fragment() {
         }
     }
 
-    private fun removeCards(indexHi: Int) {
+    private fun removeCards() {
         for(i in 0 until handArray.size) {
             val index = handIndexes[i]
             val tableRowPos = floor((index / numColumns).toDouble()).toInt()
             val tableRow = cardLayout.getChildAt(tableRowPos) as TableRow
             val rLayoutPos = index - tableRowPos * numColumns
             val rLayout = tableRow.getChildAt(rLayoutPos) as RelativeLayout
-            tableRow.removeView(rLayout)
+            rLayout.alpha = 0F
+            rLayout.isClickable = false
+            rLayout.isEnabled = false
+        }
+        totalCells -= pairsCount
+        if (totalCells == 0) {
+           MaterialDialog(context!!).show {
+               title(R.string.winner)
+               message(R.string.message)
+               positiveButton(R.string.playagain) { dialog ->
+                   (activity!! as PlayActivity).loadFragment(R.id.setup_menu)
+               }
+           }
         }
     }
 
@@ -335,7 +348,7 @@ class GameFragment : Fragment() {
         val shape = GradientDrawable()
         shape.cornerRadius = 8F
         shape.setColor(Color.parseColor("#b9dab8"))
-        (layout.parent as ViewManager).removeView(layout)
+        layout.visibility = View.INVISIBLE
 
         // getting the height and width of each row
         val numRowsWithRemainder = if (remainders == 0) this.numRows else this.numRows + 1
