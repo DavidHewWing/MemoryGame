@@ -32,6 +32,7 @@ class MainActivity : AppCompatActivity() {
                 val intent = Intent(this@MainActivity, PlayActivity::class.java)
                 intent.putParcelableArrayListExtra("cardList", ArrayList(cardList))
                 startActivity(intent)
+                finish()
             },
             Response.ErrorListener { error ->
                 Log.d("Taggy", "Error Occurred!")
